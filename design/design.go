@@ -18,6 +18,7 @@ var _ = Resource("todos", func() {
 	DefaultMedia(TodoMedia)
 	Origin("*", func() {
 		Methods("OPTION", "GET", "POST", "PATCH", "DELETE")
+		Headers("Content-Type")
 	})
 	Action("search", func() {
 		Routing(GET("/"))
@@ -67,7 +68,8 @@ var TodoMedia = MediaType("application/vnd.todo+json", func() {
 	})
 	View("default", func() {
 		Attribute("id")
-		Attribute("href")
-		Attribute("name")
+		Attribute("title")
+		Attribute("order")
+		Attribute("completed")
 	})
 })

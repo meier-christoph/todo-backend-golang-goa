@@ -3,3 +3,6 @@
 *.iml
 
 ### GOLANG
+app/
+vendor/
+todo-backend-golang-goa
