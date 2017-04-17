@@ -3,42 +3,39 @@
 package main
 
 import (
-	"context"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/meier-christoph/todo-backend-golang-goa/app"
-	"net/http"
+	"github.com/meier-christoph/todo-backend-golang-goa/controllers"
+	"log"
 )
 
 func main() {
-	// Create service
-	service := goa.New("todo")
+	var db *gorm.DB
+	db, err := gorm.Open("sqlite3", "todo.db")
+	if err != nil {
+		log.Fatal("Failed to connect to db")
+	}
+	defer db.Close()
+	db.AutoMigrate(controllers.TodoDAO{})
 
-	// Mount middleware
-	// service.Use(CustomOriginMiddleware())
+	service := goa.New("todo-backend-golang-goa")
+
+	// middleware(s)
 	service.Use(middleware.RequestID())
 	service.Use(middleware.LogRequest(true))
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 
-	// Mount "todos" controller
-	c := NewTodosController(service)
+	// controller(s)
+	c := controllers.NewTodosController(service, db)
 	app.MountTodosController(service, c)
 
-	// Start service
 	if err := service.ListenAndServe(":8080"); err != nil {
 		service.LogError("startup", "err", err)
-	}
-}
-
-// example on how to define a custom middleware e.g. setup origin headers manually
-func CustomOriginMiddleware() goa.Middleware {
-	return func(h goa.Handler) goa.Handler {
-		return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
-			rw.Header().Set("Access-Control-Allow-Origin", "*")
-			rw.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-			rw.Header().Set("Access-Control-Allow-Methods", "OPTION, GET, POST, PATCH, DELETE")
-			return h(ctx, rw, req)
-		}
 	}
 }

@@ -2,7 +2,9 @@
 .idea/
 *.iml
 
-### GOLANG
+### Project
 app/
+models/
 vendor/
 todo-backend-golang-goa
+*.db
