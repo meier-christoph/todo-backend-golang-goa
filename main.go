@@ -12,11 +12,21 @@ import (
 	"github.com/meier-christoph/todo-backend-golang-goa/app"
 	"github.com/meier-christoph/todo-backend-golang-goa/controllers"
 	"log"
+	"os"
 )
 
 func main() {
+	dialect := os.Getenv("DB_DIALECT")
+	if dialect == "" {
+		dialect = "sqlite3"
+	}
+	source := os.Getenv("DB_SOURCE")
+	if source == "" {
+		source = "todo.db"
+	}
+
 	var db *gorm.DB
-	db, err := gorm.Open("sqlite3", "todo.db")
+	db, err := gorm.Open(dialect, source)
 	if err != nil {
 		log.Fatal("Failed to connect to db")
 	}
