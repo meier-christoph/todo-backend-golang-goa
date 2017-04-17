@@ -45,7 +45,11 @@ func main() {
 	c := controllers.NewTodosController(service, db)
 	app.MountTodosController(service, c)
 
-	if err := service.ListenAndServe(":8080"); err != nil {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	if err := service.ListenAndServe(":" + port); err != nil {
 		service.LogError("startup", "err", err)
 	}
 }
