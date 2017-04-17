@@ -5,6 +5,7 @@ import (
 	"github.com/goadesign/goa"
 	"github.com/jinzhu/gorm"
 	"github.com/meier-christoph/todo-backend-golang-goa/app"
+	"net/http"
 )
 
 type TodosController struct {
@@ -35,14 +36,18 @@ func NewTodosController(service *goa.Service, db *gorm.DB) *TodosController {
 	}
 }
 
-func TodoWithUrl(dao *TodoDAO) *app.Todo {
+func TodoWithUrl(req *http.Request, dao *TodoDAO) *app.Todo {
+	scheme := "http"
+	if req.TLS != nil {
+		scheme = "https"
+	}
 	t := app.Todo{}
 	t.ID = &dao.ID
 	t.Title = &dao.Title
 	t.Order = &dao.Order
 	t.Completed = &dao.Completed
-	url := fmt.Sprintf("http://localhost:8080/todos/%d", dao.ID)
-	t.URL = &url
+	self := fmt.Sprintf("%v://%v/todos/%d", scheme, req.Host, dao.ID)
+	t.URL = &self
 	return &t
 }
 
@@ -65,7 +70,7 @@ func (c *TodosController) Create(ctx *app.CreateTodosContext) error {
 		return ctx.BadRequest()
 	}
 
-	res := TodoWithUrl(&obj)
+	res := TodoWithUrl(ctx.Request, &obj)
 	ctx.ResponseData.Header().Set("Location", *res.URL)
 	return ctx.Created(res)
 }
@@ -99,7 +104,7 @@ func (c *TodosController) Read(ctx *app.ReadTodosContext) error {
 		goa.LogError(ctx, "error reading todos", "error", err.Error())
 		return ctx.BadRequest()
 	}
-	return ctx.OK(TodoWithUrl(&obj))
+	return ctx.OK(TodoWithUrl(ctx.Request, &obj))
 }
 
 func (c *TodosController) Search(ctx *app.SearchTodosContext) error {
@@ -116,7 +121,7 @@ func (c *TodosController) Search(ctx *app.SearchTodosContext) error {
 	}
 
 	for _, t := range obj {
-		res = append(res, TodoWithUrl(t))
+		res = append(res, TodoWithUrl(ctx.Request, t))
 	}
 
 	return ctx.OK(res)
@@ -147,5 +152,5 @@ func (c *TodosController) Update(ctx *app.UpdateTodosContext) error {
 		return ctx.BadRequest()
 	}
 
-	return ctx.OK(TodoWithUrl(&obj))
+	return ctx.OK(TodoWithUrl(ctx.Request, &obj))
 }
