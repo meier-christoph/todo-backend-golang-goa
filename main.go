@@ -16,11 +16,11 @@ import (
 )
 
 func main() {
-	dialect := os.Getenv("DB_DIALECT")
+	dialect := os.Getenv("DATABASE_DIALECT")
 	if dialect == "" {
 		dialect = "sqlite3"
 	}
-	source := os.Getenv("DB_SOURCE")
+	source := os.Getenv("DATABASE_URL")
 	if source == "" {
 		source = "todo.db"
 	}

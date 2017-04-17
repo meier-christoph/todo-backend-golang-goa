@@ -3,8 +3,6 @@
 *.iml
 
 ### Project
-app/
-models/
 vendor/
-todo-backend-golang-goa
 *.db
+todo-backend-golang-goa

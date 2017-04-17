@@ -10,7 +10,8 @@ Deployed on heroku at the link below:
 - install golang and setup $GOPATH environment variable
 - checkout this repo somewhere into your $GOPATH
 - install glide for vendor management
-- run `glide install` to initialize vendor dependencies for this project
+- use glide to initialize vendor dependencies for this project
+  - `glide install`
 - make goagen cli tools from vendor
   - `cd ./vendor/github.com/goadesign/goa/goagen`
   - `go build`
@@ -28,8 +29,9 @@ Deployed on heroku at the link below:
 
 ## Run with PostgresSQL (or MySQL)
 
-`export DB_DIALECT=postgres`
-`export DB_SOURCE="host=192.168.99.100 user=todos dbname=todos sslmode=disable password=s3cr3t"`
+`export DATABASE_DIALECT=postgres`
+
+`export DATABASE_URL="host=192.168.99.100 user=todos dbname=todos sslmode=disable password=s3cr3t"`
 
 Should also work with MySQL but I did not test it :P
 
