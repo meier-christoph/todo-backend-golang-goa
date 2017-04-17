@@ -3,7 +3,7 @@
 Minimal viable product passing the test suite for todo-backends with golang and goa.
 
 Deployed on heroku at the link below:
-
+https://todo-backend-golang-goa.herokuapp.com/todos
 
 ## How to build this project
 
