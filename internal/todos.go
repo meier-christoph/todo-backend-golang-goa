@@ -8,14 +8,8 @@ import (
 	"gorm.io/gorm"
 )
 
-type TodosServiceImpl struct {
+type TodosService struct {
 	*gorm.DB
-}
-
-func NewTodosServiceImpl(db *gorm.DB) *TodosServiceImpl {
-	return &TodosServiceImpl{
-		DB: db,
-	}
 }
 
 type TodoDAO struct {
@@ -43,7 +37,7 @@ func NewTodoWithURL(ctx context.Context, dao *TodoDAO) *todos.Todo {
 	return &t
 }
 
-func (c *TodosServiceImpl) List(ctx context.Context) (res []*todos.Todo, err error) {
+func (c *TodosService) List(ctx context.Context) (res []*todos.Todo, err error) {
 	var obj []*TodoDAO
 	err = c.DB.Find(&obj).Error
 	if err != nil {
@@ -61,7 +55,7 @@ func (c *TodosServiceImpl) List(ctx context.Context) (res []*todos.Todo, err err
 	return res, nil
 }
 
-func (c *TodosServiceImpl) Create(ctx context.Context, input *todos.TodoPayload) (res *todos.Todo, err error) {
+func (c *TodosService) Create(ctx context.Context, input *todos.TodoPayload) (res *todos.Todo, err error) {
 	obj := TodoDAO{}
 	if input.Completed != nil {
 		obj.Completed = *input.Completed
@@ -81,7 +75,7 @@ func (c *TodosServiceImpl) Create(ctx context.Context, input *todos.TodoPayload)
 	return NewTodoWithURL(ctx, &obj), nil
 }
 
-func (c *TodosServiceImpl) Read(ctx context.Context, input *todos.ReadPayload) (res *todos.Todo, err error) {
+func (c *TodosService) Read(ctx context.Context, input *todos.ReadPayload) (res *todos.Todo, err error) {
 	var obj TodoDAO
 	err = c.DB.Where("id = ?", input.ID).First(&obj).Error
 	if err != nil {
@@ -93,7 +87,7 @@ func (c *TodosServiceImpl) Read(ctx context.Context, input *todos.ReadPayload) (
 	return NewTodoWithURL(ctx, &obj), nil
 }
 
-func (c *TodosServiceImpl) Update(ctx context.Context, input *todos.UpdatePayload) (res *todos.Todo, err error) {
+func (c *TodosService) Update(ctx context.Context, input *todos.UpdatePayload) (res *todos.Todo, err error) {
 	var obj TodoDAO
 	err = c.DB.Where("id = ?", input.ID).First(&obj).Error
 	if err != nil {
@@ -121,7 +115,7 @@ func (c *TodosServiceImpl) Update(ctx context.Context, input *todos.UpdatePayloa
 	return NewTodoWithURL(ctx, &obj), nil
 }
 
-func (c *TodosServiceImpl) Delete(ctx context.Context, input *todos.DeletePayload) (err error) {
+func (c *TodosService) Delete(ctx context.Context, input *todos.DeletePayload) (err error) {
 	var obj TodoDAO
 	err = c.DB.Delete(&obj, input.ID).Error
 	if err != nil {
@@ -130,7 +124,7 @@ func (c *TodosServiceImpl) Delete(ctx context.Context, input *todos.DeletePayloa
 	return nil
 }
 
-func (c *TodosServiceImpl) DeleteAll(ctx context.Context) (err error) {
+func (c *TodosService) DeleteAll(ctx context.Context) (err error) {
 	err = c.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&TodoDAO{}).Error
 	if err != nil {
 		return err

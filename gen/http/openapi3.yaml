@@ -6,6 +6,15 @@ info:
 servers:
     - url: http://localhost:8080
 paths:
+    /healthy:
+        get:
+            tags:
+                - probes
+            summary: healthy probes
+            operationId: probes#healthy
+            responses:
+                "200":
+                    description: OK response.
     /todos:
         delete:
             tags:
@@ -322,3 +331,4 @@ components:
                 title: Distinctio facilis sint blanditiis aut.
 tags:
     - name: todos
+    - name: probes

@@ -13,6 +13,17 @@ produces:
     - application/xml
     - application/gob
 paths:
+    /healthy:
+        get:
+            tags:
+                - probes
+            summary: healthy probes
+            operationId: probes#healthy
+            responses:
+                "200":
+                    description: OK response.
+            schemes:
+                - http
     /todos:
         get:
             tags:

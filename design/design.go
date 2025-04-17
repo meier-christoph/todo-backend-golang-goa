@@ -21,6 +21,16 @@ var _ = API("todo", func() {
 	})
 })
 
+var _ = Service("probes", func() {
+	Method("healthy", func() {
+		NoSecurity()
+		HTTP(func() {
+			GET("/healthy")
+			Response(StatusOK)
+		})
+	})
+})
+
 var _ = Service("todos", func() {
 	HTTP(func() {
 		Path("/todos")

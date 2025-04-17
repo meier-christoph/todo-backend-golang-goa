@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 
+	probesc "github.com/meier-christoph/todo-backend-golang-goa/gen/http/probes/client"
 	todosc "github.com/meier-christoph/todo-backend-golang-goa/gen/http/todos/client"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
@@ -22,13 +23,15 @@ import (
 //
 //	command (subcommand1|subcommand2|...)
 func UsageCommands() string {
-	return `todos (list|create|read|update|delete|delete-all)
+	return `probes healthy
+todos (list|create|read|update|delete|delete-all)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
-	return os.Args[0] + ` todos list` + "\n" +
+	return os.Args[0] + ` probes healthy` + "\n" +
+		os.Args[0] + ` todos list` + "\n" +
 		""
 }
 
@@ -42,6 +45,10 @@ func ParseEndpoint(
 	restore bool,
 ) (goa.Endpoint, any, error) {
 	var (
+		probesFlags = flag.NewFlagSet("probes", flag.ContinueOnError)
+
+		probesHealthyFlags = flag.NewFlagSet("healthy", flag.ExitOnError)
+
 		todosFlags = flag.NewFlagSet("todos", flag.ContinueOnError)
 
 		todosListFlags = flag.NewFlagSet("list", flag.ExitOnError)
@@ -61,6 +68,9 @@ func ParseEndpoint(
 
 		todosDeleteAllFlags = flag.NewFlagSet("delete-all", flag.ExitOnError)
 	)
+	probesFlags.Usage = probesUsage
+	probesHealthyFlags.Usage = probesHealthyUsage
+
 	todosFlags.Usage = todosUsage
 	todosListFlags.Usage = todosListUsage
 	todosCreateFlags.Usage = todosCreateUsage
@@ -84,6 +94,8 @@ func ParseEndpoint(
 	{
 		svcn = flag.Arg(0)
 		switch svcn {
+		case "probes":
+			svcf = probesFlags
 		case "todos":
 			svcf = todosFlags
 		default:
@@ -101,6 +113,13 @@ func ParseEndpoint(
 	{
 		epn = svcf.Arg(0)
 		switch svcn {
+		case "probes":
+			switch epn {
+			case "healthy":
+				epf = probesHealthyFlags
+
+			}
+
 		case "todos":
 			switch epn {
 			case "list":
@@ -143,6 +162,12 @@ func ParseEndpoint(
 	)
 	{
 		switch svcn {
+		case "probes":
+			c := probesc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "healthy":
+				endpoint = c.Healthy()
+			}
 		case "todos":
 			c := todosc.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
@@ -170,6 +195,29 @@ func ParseEndpoint(
 	}
 
 	return endpoint, data, nil
+}
+
+// probesUsage displays the usage of the probes command and its subcommands.
+func probesUsage() {
+	fmt.Fprintf(os.Stderr, `Service is the probes service interface.
+Usage:
+    %[1]s [globalflags] probes COMMAND [flags]
+
+COMMAND:
+    healthy: Healthy implements healthy.
+
+Additional help:
+    %[1]s probes COMMAND --help
+`, os.Args[0])
+}
+func probesHealthyUsage() {
+	fmt.Fprintf(os.Stderr, `%[1]s [flags] probes healthy
+
+Healthy implements healthy.
+
+Example:
+    %[1]s probes healthy
+`, os.Args[0])
 }
 
 // todosUsage displays the usage of the todos command and its subcommands.

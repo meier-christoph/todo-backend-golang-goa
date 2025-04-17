@@ -4,7 +4,9 @@ package main
 
 import (
 	"github.com/glebarez/sqlite"
-	genhttp "github.com/meier-christoph/todo-backend-golang-goa/gen/http/todos/server"
+	genhttpprobes "github.com/meier-christoph/todo-backend-golang-goa/gen/http/probes/server"
+	genhttptodos "github.com/meier-christoph/todo-backend-golang-goa/gen/http/todos/server"
+	genprobes "github.com/meier-christoph/todo-backend-golang-goa/gen/probes"
 	gentodos "github.com/meier-christoph/todo-backend-golang-goa/gen/todos"
 	"github.com/meier-christoph/todo-backend-golang-goa/internal"
 	"github.com/spf13/cobra"
@@ -50,12 +52,20 @@ func NewRootCommand() *cobra.Command {
 			mux := goahttp.NewMuxer()
 			requestDecoder := goahttp.RequestDecoder
 			responseEncoder := goahttp.ResponseEncoder
-			impl := internal.NewTodosServiceImpl(db)
-			endpoints := gentodos.NewEndpoints(impl)
-			endpoints.Use(goadebug.LogPayloads())
-			endpoints.Use(goalog.Endpoint)
-			rest := genhttp.New(endpoints, mux, requestDecoder, responseEncoder, nil, nil)
-			genhttp.Mount(mux, rest)
+
+			// todos
+			todoSrv := &internal.TodosService{DB: db}
+			todosEndpoints := gentodos.NewEndpoints(todoSrv)
+			todosEndpoints.Use(goadebug.LogPayloads())
+			todosEndpoints.Use(goalog.Endpoint)
+			todosServer := genhttptodos.New(todosEndpoints, mux, requestDecoder, responseEncoder, nil, nil)
+			genhttptodos.Mount(mux, todosServer)
+
+			// probes
+			probesSrv := &internal.ProbesService{}
+			probesEndpoints := genprobes.NewEndpoints(probesSrv)
+			probesServer := genhttpprobes.New(probesEndpoints, mux, requestDecoder, responseEncoder, nil, nil)
+			genhttpprobes.Mount(mux, probesServer)
 
 			var handler http.Handler = mux
 			handler = internal.ReverseProxy()(handler)
