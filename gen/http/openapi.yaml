@@ -1,0 +1,434 @@
+swagger: "2.0"
+info:
+    title: Todo
+    description: Todo-Backend Implementation with GOLANG & GOA
+    version: 0.0.1
+host: localhost:8080
+consumes:
+    - application/json
+    - application/xml
+    - application/gob
+produces:
+    - application/json
+    - application/xml
+    - application/gob
+paths:
+    /todos:
+        get:
+            tags:
+                - todos
+            summary: list todos
+            operationId: todos#list
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/Todo'
+            schemes:
+                - http
+        post:
+            tags:
+                - todos
+            summary: create todos
+            operationId: todos#create
+            parameters:
+                - name: CreateRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/TodoPayload'
+            responses:
+                "201":
+                    description: Created response.
+                    schema:
+                        $ref: '#/definitions/Todo'
+                        required:
+                            - id
+                            - url
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        $ref: '#/definitions/TodosCreateBadRequestResponseBody'
+            schemes:
+                - http
+        delete:
+            tags:
+                - todos
+            summary: deleteAll todos
+            operationId: todos#deleteAll
+            responses:
+                "204":
+                    description: No Content response.
+            schemes:
+                - http
+    /todos/{id}:
+        get:
+            tags:
+                - todos
+            summary: read todos
+            operationId: todos#read
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: string
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/Todo'
+                        required:
+                            - id
+                            - url
+                "404":
+                    description: Not Found response.
+                    schema:
+                        $ref: '#/definitions/TodosReadNotFoundResponseBody'
+            schemes:
+                - http
+        delete:
+            tags:
+                - todos
+            summary: delete todos
+            operationId: todos#delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: string
+            responses:
+                "204":
+                    description: No Content response.
+                "404":
+                    description: Not Found response.
+                    schema:
+                        $ref: '#/definitions/TodosDeleteNotFoundResponseBody'
+            schemes:
+                - http
+        patch:
+            tags:
+                - todos
+            summary: update todos
+            operationId: todos#update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  type: string
+                - name: UpdateRequestBody
+                  in: body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/TodosUpdateRequestBody'
+            responses:
+                "200":
+                    description: OK response.
+                    schema:
+                        $ref: '#/definitions/Todo'
+                        required:
+                            - id
+                            - url
+                "400":
+                    description: Bad Request response.
+                    schema:
+                        $ref: '#/definitions/TodosUpdateBadRequestResponseBody'
+                "404":
+                    description: Not Found response.
+                    schema:
+                        $ref: '#/definitions/TodosUpdateNotFoundResponseBody'
+            schemes:
+                - http
+definitions:
+    Todo:
+        title: Todo
+        type: object
+        properties:
+            completed:
+                type: boolean
+                description: Whether the task is completed or not
+                example: true
+            id:
+                type: integer
+                description: Unique ID
+                example: 5209923079409201342
+                format: int64
+            order:
+                type: integer
+                description: Order or priority of the task
+                example: 5574749494917531383
+                format: int64
+            title:
+                type: string
+                description: Title of the task
+                example: Qui ea aut labore vel est.
+            url:
+                type: string
+                example: Omnis molestiae similique.
+        example:
+            completed: true
+            id: 2455053939822883392
+            order: 7641188071616973852
+            title: Et repellat et.
+            url: Est dolor impedit.
+        required:
+            - id
+            - url
+    TodoPayload:
+        title: TodoPayload
+        type: object
+        properties:
+            completed:
+                type: boolean
+                description: Whether the task is completed or not
+                example: true
+            order:
+                type: integer
+                description: Order or priority of the task
+                example: 4972029371784866612
+                format: int64
+            title:
+                type: string
+                description: Title of the task
+                example: Odit velit.
+        example:
+            completed: false
+            order: 5096165957399080004
+            title: Quis incidunt ut id ad dolores.
+    TodosCreateBadRequestResponseBody:
+        title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+        type: object
+        properties:
+            fault:
+                type: boolean
+                description: Is the error a server-side fault?
+                example: true
+            id:
+                type: string
+                description: ID is a unique identifier for this particular occurrence of the problem.
+                example: 123abc
+            message:
+                type: string
+                description: Message is a human-readable explanation specific to this occurrence of the problem.
+                example: parameter 'p' must be an integer
+            name:
+                type: string
+                description: Name is the name of this class of errors.
+                example: bad_request
+            temporary:
+                type: boolean
+                description: Is the error temporary?
+                example: false
+            timeout:
+                type: boolean
+                description: Is the error a timeout?
+                example: true
+        description: Invalid user input. (default view)
+        example:
+            fault: false
+            id: 123abc
+            message: parameter 'p' must be an integer
+            name: bad_request
+            temporary: true
+            timeout: false
+        required:
+            - name
+            - id
+            - message
+            - temporary
+            - timeout
+            - fault
+    TodosDeleteNotFoundResponseBody:
+        title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+        type: object
+        properties:
+            fault:
+                type: boolean
+                description: Is the error a server-side fault?
+                example: false
+            id:
+                type: string
+                description: ID is a unique identifier for this particular occurrence of the problem.
+                example: 123abc
+            message:
+                type: string
+                description: Message is a human-readable explanation specific to this occurrence of the problem.
+                example: parameter 'p' must be an integer
+            name:
+                type: string
+                description: Name is the name of this class of errors.
+                example: bad_request
+            temporary:
+                type: boolean
+                description: Is the error temporary?
+                example: true
+            timeout:
+                type: boolean
+                description: Is the error a timeout?
+                example: true
+        description: Todo not found. (default view)
+        example:
+            fault: false
+            id: 123abc
+            message: parameter 'p' must be an integer
+            name: bad_request
+            temporary: false
+            timeout: false
+        required:
+            - name
+            - id
+            - message
+            - temporary
+            - timeout
+            - fault
+    TodosReadNotFoundResponseBody:
+        title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+        type: object
+        properties:
+            fault:
+                type: boolean
+                description: Is the error a server-side fault?
+                example: false
+            id:
+                type: string
+                description: ID is a unique identifier for this particular occurrence of the problem.
+                example: 123abc
+            message:
+                type: string
+                description: Message is a human-readable explanation specific to this occurrence of the problem.
+                example: parameter 'p' must be an integer
+            name:
+                type: string
+                description: Name is the name of this class of errors.
+                example: bad_request
+            temporary:
+                type: boolean
+                description: Is the error temporary?
+                example: false
+            timeout:
+                type: boolean
+                description: Is the error a timeout?
+                example: true
+        description: Todo not found. (default view)
+        example:
+            fault: true
+            id: 123abc
+            message: parameter 'p' must be an integer
+            name: bad_request
+            temporary: false
+            timeout: false
+        required:
+            - name
+            - id
+            - message
+            - temporary
+            - timeout
+            - fault
+    TodosUpdateBadRequestResponseBody:
+        title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+        type: object
+        properties:
+            fault:
+                type: boolean
+                description: Is the error a server-side fault?
+                example: true
+            id:
+                type: string
+                description: ID is a unique identifier for this particular occurrence of the problem.
+                example: 123abc
+            message:
+                type: string
+                description: Message is a human-readable explanation specific to this occurrence of the problem.
+                example: parameter 'p' must be an integer
+            name:
+                type: string
+                description: Name is the name of this class of errors.
+                example: bad_request
+            temporary:
+                type: boolean
+                description: Is the error temporary?
+                example: true
+            timeout:
+                type: boolean
+                description: Is the error a timeout?
+                example: false
+        description: Invalid user input. (default view)
+        example:
+            fault: false
+            id: 123abc
+            message: parameter 'p' must be an integer
+            name: bad_request
+            temporary: true
+            timeout: false
+        required:
+            - name
+            - id
+            - message
+            - temporary
+            - timeout
+            - fault
+    TodosUpdateNotFoundResponseBody:
+        title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+        type: object
+        properties:
+            fault:
+                type: boolean
+                description: Is the error a server-side fault?
+                example: true
+            id:
+                type: string
+                description: ID is a unique identifier for this particular occurrence of the problem.
+                example: 123abc
+            message:
+                type: string
+                description: Message is a human-readable explanation specific to this occurrence of the problem.
+                example: parameter 'p' must be an integer
+            name:
+                type: string
+                description: Name is the name of this class of errors.
+                example: bad_request
+            temporary:
+                type: boolean
+                description: Is the error temporary?
+                example: true
+            timeout:
+                type: boolean
+                description: Is the error a timeout?
+                example: true
+        description: Todo not found. (default view)
+        example:
+            fault: true
+            id: 123abc
+            message: parameter 'p' must be an integer
+            name: bad_request
+            temporary: false
+            timeout: true
+        required:
+            - name
+            - id
+            - message
+            - temporary
+            - timeout
+            - fault
+    TodosUpdateRequestBody:
+        title: TodosUpdateRequestBody
+        type: object
+        properties:
+            completed:
+                type: boolean
+                description: Whether the task is completed or not
+                example: false
+            order:
+                type: integer
+                description: Order or priority of the task
+                example: 739709765124726006
+                format: int64
+            title:
+                type: string
+                description: Title of the task
+                example: Doloremque et.
+        example:
+            completed: true
+            order: 3746761877217356699
+            title: Fugiat iusto eaque.
