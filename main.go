@@ -11,6 +11,7 @@ import (
 	goadebug "goa.design/clue/debug"
 	goalog "goa.design/clue/log"
 	goahttp "goa.design/goa/v3/http"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
 	"net/http"
@@ -28,7 +29,15 @@ func NewRootCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "todo-backend",
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			db, err := gorm.Open(sqlite.Open("todos.db"), &gorm.Config{})
+			var dial gorm.Dialector
+			uri := os.Getenv("DATABASE_URI")
+			if uri != "" {
+				dial = postgres.Open(uri)
+			} else {
+				dial = sqlite.Open("todos.db")
+			}
+
+			db, err := gorm.Open(dial, &gorm.Config{})
 			if err != nil {
 				return err
 			}

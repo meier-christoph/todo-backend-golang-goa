@@ -25,6 +25,10 @@ type TodoDAO struct {
 	Completed bool
 }
 
+func (TodoDAO) TableName() string {
+	return "todos"
+}
+
 func NewTodoWithURL(ctx context.Context, dao *TodoDAO) *todos.Todo {
 	url, _ := ctx.Value(ReverseProxyPublicUrl).(string)
 	if url == "" {

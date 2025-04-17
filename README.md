@@ -18,4 +18,20 @@ https://todo-backend-golang-goa.herokuapp.com/todos
 (*): Normally you would not commit the generated code but since this is a showcase for goa I decided to include it
 anyway. All the generated code is in the gen folder, everything else is part of the actual source.
 
+### Run the todo backend test suite
+
+Locally:
+
+https://www.todobackend.com/specs/index.html?http://localhost:8080/todos
+
+Hosted:
+
+https://www.todobackend.com/specs/index.html?http://localhost:8080/todos
+
 ### Run with PostgreSQL
+
+```shell
+export DATABASE_URI="postgresql://user:secret@localhost:5432/todos"
+```
+
+Note: if this variable is not set it will run with sqlite (relative 'todos.db' file)
