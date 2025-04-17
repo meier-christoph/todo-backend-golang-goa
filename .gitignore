@@ -5,4 +5,4 @@
 ### Project
 vendor/
 *.db
-todo-backend-golang-goa
+*.exe

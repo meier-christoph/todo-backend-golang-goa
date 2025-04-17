@@ -1,55 +1,70 @@
-//go:generate goagen app -d github.com/meier-christoph/todo-backend-golang-goa/design
+//go:generate goa gen github.com/meier-christoph/todo-backend-golang-goa/design
 
 package main
 
 import (
-	"github.com/goadesign/goa"
-	"github.com/goadesign/goa/middleware"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/meier-christoph/todo-backend-golang-goa/app"
-	"github.com/meier-christoph/todo-backend-golang-goa/controllers"
+	"github.com/glebarez/sqlite"
+	genhttp "github.com/meier-christoph/todo-backend-golang-goa/gen/http/todos/server"
+	gentodos "github.com/meier-christoph/todo-backend-golang-goa/gen/todos"
+	"github.com/meier-christoph/todo-backend-golang-goa/internal"
+	"github.com/spf13/cobra"
+	goadebug "goa.design/clue/debug"
+	goalog "goa.design/clue/log"
+	goahttp "goa.design/goa/v3/http"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"log"
+	"net/http"
 	"os"
 )
 
 func main() {
-	dialect := os.Getenv("DATABASE_DIALECT")
-	if dialect == "" {
-		dialect = "sqlite3"
+	cmd := NewRootCommand()
+	if err := cmd.Execute(); err != nil {
+		os.Exit(1)
 	}
-	source := os.Getenv("DATABASE_URL")
-	if source == "" {
-		source = "todo.db"
+}
+
+func NewRootCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use: "todo-backend",
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			var dial gorm.Dialector
+			uri := os.Getenv("DATABASE_URI")
+			if uri != "" {
+				dial = postgres.Open(uri)
+			} else {
+				dial = sqlite.Open("todos.db")
+			}
+
+			db, err := gorm.Open(dial, &gorm.Config{})
+			if err != nil {
+				return err
+			}
+
+			err = db.AutoMigrate(internal.TodoDAO{})
+			if err != nil {
+				return err
+			}
+
+			mux := goahttp.NewMuxer()
+			requestDecoder := goahttp.RequestDecoder
+			responseEncoder := goahttp.ResponseEncoder
+			impl := internal.NewTodosServiceImpl(db)
+			endpoints := gentodos.NewEndpoints(impl)
+			endpoints.Use(goadebug.LogPayloads())
+			endpoints.Use(goalog.Endpoint)
+			rest := genhttp.New(endpoints, mux, requestDecoder, responseEncoder, nil, nil)
+			genhttp.Mount(mux, rest)
+
+			var handler http.Handler = mux
+			handler = internal.ReverseProxy()(handler)
+
+			server := &http.Server{Addr: ":8080", Handler: handler}
+			log.Println("Starting service on :8080")
+			return server.ListenAndServe()
+		},
 	}
 
-	var db *gorm.DB
-	db, err := gorm.Open(dialect, source)
-	if err != nil {
-		log.Fatal("Failed to connect to db")
-	}
-	defer db.Close()
-	db.AutoMigrate(controllers.TodoDAO{})
-
-	service := goa.New("todo-backend-golang-goa")
-
-	// middleware(s)
-	service.Use(middleware.RequestID())
-	service.Use(middleware.LogRequest(true))
-	service.Use(middleware.ErrorHandler(service, true))
-	service.Use(middleware.Recover())
-
-	// controller(s)
-	c := controllers.NewTodosController(service, db)
-	app.MountTodosController(service, c)
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	if err := service.ListenAndServe(":" + port); err != nil {
-		service.LogError("startup", "err", err)
-	}
+	return cmd
 }
