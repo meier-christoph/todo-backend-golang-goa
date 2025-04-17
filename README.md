@@ -4,7 +4,7 @@ Minimal viable product passing the test suite for todo-backends with golang and 
 
 Deployed at the link below:
 
-https://todo-backend-golang-goa.herokuapp.com/todos
+https://api--todo-backend--6pjlr7gjvs8n.code.run/todos
 
 ### How to build this project
 
@@ -26,7 +26,7 @@ https://www.todobackend.com/specs/index.html?http://localhost:8080/todos
 
 Hosted:
 
-https://www.todobackend.com/specs/index.html?http://localhost:8080/todos
+https://www.todobackend.com/specs/index.html?https://api--todo-backend--6pjlr7gjvs8n.code.run/todos
 
 ### Run with PostgreSQL
 
