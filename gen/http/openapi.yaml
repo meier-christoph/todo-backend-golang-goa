@@ -24,6 +24,7 @@ paths:
                     description: OK response.
             schemes:
                 - http
+            security: []
     /todos:
         get:
             tags:
@@ -59,9 +60,17 @@ paths:
                             - id
                             - url
                 "400":
-                    description: Bad Request response.
+                    description: 'BadRequest: Invalid user input.'
                     schema:
                         $ref: '#/definitions/TodosCreateBadRequestResponseBody'
+                    examples:
+                        application/vnd.goa.error:
+                            fault: false
+                            id: 123abc
+                            message: parameter 'p' must be an integer
+                            name: BadRequest
+                            temporary: false
+                            timeout: false
             schemes:
                 - http
         delete:
@@ -94,9 +103,17 @@ paths:
                             - id
                             - url
                 "404":
-                    description: Not Found response.
+                    description: 'NotFound: Todo not found.'
                     schema:
                         $ref: '#/definitions/TodosReadNotFoundResponseBody'
+                    examples:
+                        application/vnd.goa.error:
+                            fault: false
+                            id: 123abc
+                            message: parameter 'p' must be an integer
+                            name: NotFound
+                            temporary: false
+                            timeout: false
             schemes:
                 - http
         delete:
@@ -113,9 +130,17 @@ paths:
                 "204":
                     description: No Content response.
                 "404":
-                    description: Not Found response.
+                    description: 'NotFound: Todo not found.'
                     schema:
                         $ref: '#/definitions/TodosDeleteNotFoundResponseBody'
+                    examples:
+                        application/vnd.goa.error:
+                            fault: false
+                            id: 123abc
+                            message: parameter 'p' must be an integer
+                            name: NotFound
+                            temporary: false
+                            timeout: false
             schemes:
                 - http
         patch:
@@ -142,13 +167,29 @@ paths:
                             - id
                             - url
                 "400":
-                    description: Bad Request response.
+                    description: 'BadRequest: Invalid user input.'
                     schema:
                         $ref: '#/definitions/TodosUpdateBadRequestResponseBody'
+                    examples:
+                        application/vnd.goa.error:
+                            fault: false
+                            id: 123abc
+                            message: parameter 'p' must be an integer
+                            name: BadRequest
+                            temporary: false
+                            timeout: false
                 "404":
-                    description: Not Found response.
+                    description: 'NotFound: Todo not found.'
                     schema:
                         $ref: '#/definitions/TodosUpdateNotFoundResponseBody'
+                    examples:
+                        application/vnd.goa.error:
+                            fault: false
+                            id: 123abc
+                            message: parameter 'p' must be an integer
+                            name: NotFound
+                            temporary: false
+                            timeout: false
             schemes:
                 - http
 definitions:
@@ -163,26 +204,26 @@ definitions:
             id:
                 type: integer
                 description: Unique ID
-                example: 5209923079409201342
+                example: 7672171696662812378
                 format: int64
             order:
                 type: integer
                 description: Order or priority of the task
-                example: 5574749494917531383
+                example: 8457095650093581103
                 format: int64
             title:
                 type: string
                 description: Title of the task
-                example: Qui ea aut labore vel est.
+                example: Ex et voluptatibus.
             url:
                 type: string
-                example: Omnis molestiae similique.
+                example: Perferendis dicta.
         example:
             completed: true
-            id: 2455053939822883392
-            order: 7641188071616973852
-            title: Et repellat et.
-            url: Est dolor impedit.
+            id: 7672171696662812378
+            order: 8457095650093581103
+            title: Ex et voluptatibus.
+            url: Perferendis dicta.
         required:
             - id
             - url
@@ -197,16 +238,16 @@ definitions:
             order:
                 type: integer
                 description: Order or priority of the task
-                example: 4972029371784866612
+                example: 6090170723161103845
                 format: int64
             title:
                 type: string
                 description: Title of the task
-                example: Odit velit.
+                example: Blanditiis vitae magni laboriosam.
         example:
-            completed: false
-            order: 5096165957399080004
-            title: Quis incidunt ut id ad dolores.
+            completed: true
+            order: 6090170723161103845
+            title: Blanditiis vitae magni laboriosam.
     TodosCreateBadRequestResponseBody:
         title: 'Mediatype identifier: application/vnd.goa.error; view=default'
         type: object
@@ -214,7 +255,7 @@ definitions:
             fault:
                 type: boolean
                 description: Is the error a server-side fault?
-                example: true
+                example: false
             id:
                 type: string
                 description: ID is a unique identifier for this particular occurrence of the problem.
@@ -235,14 +276,14 @@ definitions:
                 type: boolean
                 description: Is the error a timeout?
                 example: true
-        description: Invalid user input. (default view)
+        description: Error response result type (default view)
         example:
             fault: false
             id: 123abc
             message: parameter 'p' must be an integer
             name: bad_request
-            temporary: true
-            timeout: false
+            temporary: false
+            timeout: true
         required:
             - name
             - id
@@ -277,14 +318,14 @@ definitions:
             timeout:
                 type: boolean
                 description: Is the error a timeout?
-                example: true
-        description: Todo not found. (default view)
+                example: false
+        description: Error response result type (default view)
         example:
             fault: false
             id: 123abc
             message: parameter 'p' must be an integer
             name: bad_request
-            temporary: false
+            temporary: true
             timeout: false
         required:
             - name
@@ -300,7 +341,7 @@ definitions:
             fault:
                 type: boolean
                 description: Is the error a server-side fault?
-                example: false
+                example: true
             id:
                 type: string
                 description: ID is a unique identifier for this particular occurrence of the problem.
@@ -316,19 +357,19 @@ definitions:
             temporary:
                 type: boolean
                 description: Is the error temporary?
-                example: false
+                example: true
             timeout:
                 type: boolean
                 description: Is the error a timeout?
                 example: true
-        description: Todo not found. (default view)
+        description: Error response result type (default view)
         example:
             fault: true
             id: 123abc
             message: parameter 'p' must be an integer
             name: bad_request
-            temporary: false
-            timeout: false
+            temporary: true
+            timeout: true
         required:
             - name
             - id
@@ -343,7 +384,7 @@ definitions:
             fault:
                 type: boolean
                 description: Is the error a server-side fault?
-                example: true
+                example: false
             id:
                 type: string
                 description: ID is a unique identifier for this particular occurrence of the problem.
@@ -364,7 +405,7 @@ definitions:
                 type: boolean
                 description: Is the error a timeout?
                 example: false
-        description: Invalid user input. (default view)
+        description: Error response result type (default view)
         example:
             fault: false
             id: 123abc
@@ -402,12 +443,12 @@ definitions:
             temporary:
                 type: boolean
                 description: Is the error temporary?
-                example: true
+                example: false
             timeout:
                 type: boolean
                 description: Is the error a timeout?
                 example: true
-        description: Todo not found. (default view)
+        description: Error response result type (default view)
         example:
             fault: true
             id: 123abc
@@ -433,13 +474,13 @@ definitions:
             order:
                 type: integer
                 description: Order or priority of the task
-                example: 739709765124726006
+                example: 2016535712702321141
                 format: int64
             title:
                 type: string
                 description: Title of the task
-                example: Doloremque et.
+                example: Est impedit aut rerum.
         example:
-            completed: true
-            order: 3746761877217356699
-            title: Fugiat iusto eaque.
+            completed: false
+            order: 2016535712702321141
+            title: Est impedit aut rerum.

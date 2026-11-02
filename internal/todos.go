@@ -44,7 +44,7 @@ func (c *TodosService) List(ctx context.Context) (res []*todos.Todo, err error) 
 		return nil, err
 	}
 
-	if obj == nil || len(obj) == 0 {
+	if len(obj) == 0 {
 		return []*todos.Todo{}, nil
 	}
 
