@@ -15,6 +15,7 @@ paths:
             responses:
                 "200":
                     description: OK response.
+            security: []
     /todos:
         delete:
             tags:
@@ -39,57 +40,43 @@ paths:
                                 items:
                                     $ref: '#/components/schemas/Todo'
                                 example:
-                                    - completed: false
-                                      id: 6616090331682594200
-                                      order: 8470419619838530899
-                                      title: Vel libero debitis.
-                                      url: Facere aperiam minima mollitia accusantium ut quis.
-                                    - completed: false
-                                      id: 6616090331682594200
-                                      order: 8470419619838530899
-                                      title: Vel libero debitis.
-                                      url: Facere aperiam minima mollitia accusantium ut quis.
-                                    - completed: false
-                                      id: 6616090331682594200
-                                      order: 8470419619838530899
-                                      title: Vel libero debitis.
-                                      url: Facere aperiam minima mollitia accusantium ut quis.
+                                    - completed: true
+                                      id: 7672171696662812378
+                                      order: 8457095650093581103
+                                      title: Ex et voluptatibus.
+                                      url: Perferendis dicta.
+                                    - completed: true
+                                      id: 7672171696662812378
+                                      order: 8457095650093581103
+                                      title: Ex et voluptatibus.
+                                      url: Perferendis dicta.
                             example:
-                                - completed: false
-                                  id: 6616090331682594200
-                                  order: 8470419619838530899
-                                  title: Vel libero debitis.
-                                  url: Facere aperiam minima mollitia accusantium ut quis.
-                                - completed: false
-                                  id: 6616090331682594200
-                                  order: 8470419619838530899
-                                  title: Vel libero debitis.
-                                  url: Facere aperiam minima mollitia accusantium ut quis.
-                                - completed: false
-                                  id: 6616090331682594200
-                                  order: 8470419619838530899
-                                  title: Vel libero debitis.
-                                  url: Facere aperiam minima mollitia accusantium ut quis.
-                                - completed: false
-                                  id: 6616090331682594200
-                                  order: 8470419619838530899
-                                  title: Vel libero debitis.
-                                  url: Facere aperiam minima mollitia accusantium ut quis.
+                                - completed: true
+                                  id: 7672171696662812378
+                                  order: 8457095650093581103
+                                  title: Ex et voluptatibus.
+                                  url: Perferendis dicta.
+                                - completed: true
+                                  id: 7672171696662812378
+                                  order: 8457095650093581103
+                                  title: Ex et voluptatibus.
+                                  url: Perferendis dicta.
         post:
             tags:
                 - todos
             summary: create todos
             operationId: todos#create
             requestBody:
+                description: Request body for create.
                 required: true
                 content:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/TodoPayload'
                         example:
-                            completed: false
-                            order: 3935193967633306166
-                            title: Voluptatibus adipisci eos vel.
+                            completed: true
+                            order: 6090170723161103845
+                            title: Blanditiis vitae magni laboriosam.
             responses:
                 "201":
                     description: Created response.
@@ -98,17 +85,24 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/Todo'
                             example:
-                                completed: true
-                                id: 4753212596655035884
-                                order: 7041713459340774230
-                                title: Quia rerum enim cupiditate eaque nihil dolore.
-                                url: Voluptatum molestias assumenda.
+                                completed: false
+                                id: 4534222015564194139
+                                order: 7306961935261350155
+                                title: Rerum maxime laborum.
+                                url: Culpa fuga perspiciatis.
                 "400":
                     description: 'BadRequest: Invalid user input.'
                     content:
                         application/vnd.goa.error:
                             schema:
                                 $ref: '#/components/schemas/Error'
+                            example:
+                                fault: false
+                                id: 123abc
+                                message: parameter 'p' must be an integer
+                                name: BadRequest
+                                temporary: false
+                                timeout: false
     /todos/{id}:
         delete:
             tags:
@@ -121,8 +115,8 @@ paths:
                   required: true
                   schema:
                     type: string
-                    example: Eligendi dolor et maiores autem.
-                  example: Esse nisi rerum a ipsam delectus qui.
+                    example: Nihil veritatis reiciendis ad.
+                  example: Nihil veritatis reiciendis ad.
             responses:
                 "204":
                     description: No Content response.
@@ -132,6 +126,13 @@ paths:
                         application/vnd.goa.error:
                             schema:
                                 $ref: '#/components/schemas/Error'
+                            example:
+                                fault: false
+                                id: 123abc
+                                message: parameter 'p' must be an integer
+                                name: NotFound
+                                temporary: false
+                                timeout: false
         get:
             tags:
                 - todos
@@ -143,8 +144,8 @@ paths:
                   required: true
                   schema:
                     type: string
-                    example: Corrupti autem occaecati.
-                  example: Qui ipsa molestiae delectus quis.
+                    example: Voluptatem explicabo odit laudantium quos.
+                  example: Voluptatem explicabo odit laudantium quos.
             responses:
                 "200":
                     description: OK response.
@@ -153,17 +154,24 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/Todo'
                             example:
-                                completed: false
-                                id: 6048023540673081850
-                                order: 5165791562111512251
-                                title: Dolor quia et est.
-                                url: Et quasi.
+                                completed: true
+                                id: 8812075414571772195
+                                order: 3660912481358776047
+                                title: Harum nemo voluptatem unde.
+                                url: Magni quis nisi doloremque fugit repellendus.
                 "404":
                     description: 'NotFound: Todo not found.'
                     content:
                         application/vnd.goa.error:
                             schema:
                                 $ref: '#/components/schemas/Error'
+                            example:
+                                fault: false
+                                id: 123abc
+                                message: parameter 'p' must be an integer
+                                name: NotFound
+                                temporary: false
+                                timeout: false
         patch:
             tags:
                 - todos
@@ -175,18 +183,19 @@ paths:
                   required: true
                   schema:
                     type: string
-                    example: Iure corrupti.
-                  example: Culpa nobis.
+                    example: Cupiditate neque magnam modi fugiat commodi.
+                  example: Cupiditate neque magnam modi fugiat commodi.
             requestBody:
+                description: Request body for update.
                 required: true
                 content:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/UpdateRequestBody'
                         example:
-                            completed: true
-                            order: 4610252795505360349
-                            title: Molestiae molestias rem exercitationem vel officia consequatur.
+                            completed: false
+                            order: 2016535712702321141
+                            title: Est impedit aut rerum.
             responses:
                 "200":
                     description: OK response.
@@ -196,22 +205,36 @@ paths:
                                 $ref: '#/components/schemas/Todo'
                             example:
                                 completed: false
-                                id: 6834463199987684273
-                                order: 5648491383675271446
-                                title: Dolorum cupiditate est error magni fugit.
-                                url: At aut vero.
+                                id: 9164918609239624857
+                                order: 7373577068263458537
+                                title: Pariatur dolores aut qui perferendis iure.
+                                url: Vitae doloremque facilis iusto.
                 "400":
                     description: 'BadRequest: Invalid user input.'
                     content:
                         application/vnd.goa.error:
                             schema:
                                 $ref: '#/components/schemas/Error'
+                            example:
+                                fault: false
+                                id: 123abc
+                                message: parameter 'p' must be an integer
+                                name: BadRequest
+                                temporary: false
+                                timeout: false
                 "404":
                     description: 'NotFound: Todo not found.'
                     content:
                         application/vnd.goa.error:
                             schema:
                                 $ref: '#/components/schemas/Error'
+                            example:
+                                fault: false
+                                id: 123abc
+                                message: parameter 'p' must be an integer
+                                name: NotFound
+                                temporary: false
+                                timeout: false
 components:
     schemas:
         Error:
@@ -220,7 +243,7 @@ components:
                 fault:
                     type: boolean
                     description: Is the error a server-side fault?
-                    example: true
+                    example: false
                 id:
                     type: string
                     description: ID is a unique identifier for this particular occurrence of the problem.
@@ -241,14 +264,14 @@ components:
                     type: boolean
                     description: Is the error a timeout?
                     example: true
-            description: Invalid user input.
+            description: Error response result type
             example:
-                fault: true
+                fault: false
                 id: 123abc
                 message: parameter 'p' must be an integer
                 name: bad_request
-                temporary: true
-                timeout: false
+                temporary: false
+                timeout: true
             required:
                 - name
                 - id
@@ -262,30 +285,30 @@ components:
                 completed:
                     type: boolean
                     description: Whether the task is completed or not
-                    example: false
+                    example: true
                 id:
                     type: integer
                     description: Unique ID
-                    example: 6347800286872210480
+                    example: 7672171696662812378
                     format: int64
                 order:
                     type: integer
                     description: Order or priority of the task
-                    example: 695485723255361810
+                    example: 8457095650093581103
                     format: int64
                 title:
                     type: string
                     description: Title of the task
-                    example: Repellat culpa ipsum optio at doloribus ea.
+                    example: Ex et voluptatibus.
                 url:
                     type: string
-                    example: Culpa quisquam assumenda.
+                    example: Perferendis dicta.
             example:
-                completed: false
-                id: 9133958982753990109
-                order: 5548886307755879753
-                title: Eum ipsum quam recusandae fuga velit.
-                url: Recusandae corporis et sed.
+                completed: true
+                id: 7672171696662812378
+                order: 8457095650093581103
+                title: Ex et voluptatibus.
+                url: Perferendis dicta.
             required:
                 - id
                 - url
@@ -299,36 +322,38 @@ components:
                 order:
                     type: integer
                     description: Order or priority of the task
-                    example: 7958389109286441471
+                    example: 6090170723161103845
                     format: int64
                 title:
                     type: string
                     description: Title of the task
-                    example: Voluptatem qui assumenda ipsum.
+                    example: Blanditiis vitae magni laboriosam.
+            description: Request body for create.
             example:
                 completed: true
-                order: 6049171131321094305
-                title: Non assumenda aliquid perspiciatis voluptatem ut.
+                order: 6090170723161103845
+                title: Blanditiis vitae magni laboriosam.
         UpdateRequestBody:
             type: object
             properties:
                 completed:
                     type: boolean
                     description: Whether the task is completed or not
-                    example: true
+                    example: false
                 order:
                     type: integer
                     description: Order or priority of the task
-                    example: 7706733665398639614
+                    example: 2016535712702321141
                     format: int64
                 title:
                     type: string
                     description: Title of the task
-                    example: Dolores quis rerum laudantium voluptatem magni.
+                    example: Est impedit aut rerum.
+            description: Request body for update.
             example:
                 completed: false
-                order: 4953306782095514376
-                title: Distinctio facilis sint blanditiis aut.
+                order: 2016535712702321141
+                title: Est impedit aut rerum.
 tags:
     - name: todos
     - name: probes
